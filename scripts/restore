@@ -42,7 +42,7 @@ ynh_install_nodejs --nodejs_version=$NODEJS_VERSION
 #=================================================
 ynh_script_progression --message="Restoring the PHP-FPM configuration..."
 
-ynh_restore_file --origin_path="/etc/php/$phpversion/fpm/pool.d/$app.conf"
+ynh_restore_file --origin_path="/etc/php/8.1/fpm/pool.d/$app.conf"
 
 ynh_restore_file --origin_path="/etc/nginx/conf.d/$domain.d/$app.conf"
 
@@ -55,7 +55,7 @@ ynh_restore_file --origin_path="/etc/cron.d/$app"
 #=================================================
 ynh_script_progression --message="Reloading NGINX web server and PHP-FPM..." --weight=1
 
-ynh_systemd_action --service_name=php$phpversion-fpm --action=reload
+ynh_systemd_action --service_name=php8.1-fpm --action=reload
 ynh_systemd_action --service_name=nginx --action=reload
 
 #=================================================
