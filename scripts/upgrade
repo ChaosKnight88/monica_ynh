@@ -74,7 +74,7 @@ ynh_install_nodejs --nodejs_version=$NODEJS_VERSION
 ynh_script_progression --message="Upgrading PHP-FPM configuration..." --weight=1
 
 # Create a dedicated PHP-FPM config
-ynh_add_fpm_config --phpversion=$phpversion --usage=$fpm_usage --footprint=$fpm_footprint
+ynh_add_fpm_config --phpversion=8.1 --usage=$fpm_usage --footprint=$fpm_footprint
 
 # Create a dedicated NGINX config
 ynh_add_nginx_config
@@ -87,7 +87,7 @@ ynh_add_nginx_config
 ynh_script_progression --message="Updating php dependencies..."
 
 ynh_secure_remove --file="$install_dir/vendor"
-ynh_exec_warn_less ynh_install_composer --phpversion="$phpversion" --workdir="$install_dir"
+ynh_exec_warn_less ynh_install_composer --phpversion="8.1" --workdir="$install_dir"
 
 chmod 750 "$install_dir"
 chmod -R o-rwx "$install_dir"
@@ -111,7 +111,7 @@ pushd "$install_dir"
 	ynh_use_nodejs
 	ynh_exec_warn_less ynh_exec_as $app $ynh_node_load_PATH yarn install
 	ynh_exec_warn_less ynh_exec_as $app $ynh_node_load_PATH yarn run production
-	ynh_exec_warn_less ynh_exec_as $app php$phpversion artisan monica:update --force
+	ynh_exec_warn_less ynh_exec_as $app php8.1 artisan monica:update --force
 popd
 
 if [ -f $install_dir/storage/oauth-private.key ]; then
@@ -121,8 +121,8 @@ if [ -f $install_dir/storage/oauth-private.key ]; then
 	ynh_replace_string --match_string="mobile_key" --replace_string="$mobile_key" --target_file="$install_dir/.env"
 else
 	pushd "$install_dir"
-		ynh_exec_warn_less ynh_exec_as $app php$phpversion artisan passport:keys
-		ynh_exec_warn_less ynh_exec_as $app php$phpversion artisan passport:client --password -n > key.txt
+		ynh_exec_warn_less ynh_exec_as $app php8.1 artisan passport:keys
+		ynh_exec_warn_less ynh_exec_as $app php8.1 artisan passport:client --password -n > key.txt
 		mobile_id=$( tail -2 key.txt | head -1 | cut -c 12- )
 		mobile_key=$( tail -1 key.txt | cut -c 16- )
 		ynh_replace_string --match_string="mobile_id" --replace_string="$mobile_id"   --target_file="$install_dir/.env"
@@ -133,13 +133,13 @@ else
 	popd
 fi
 pushd "$install_dir"
-	ynh_exec_warn_less ynh_exec_as $app php$phpversion artisan config:cache
+	ynh_exec_warn_less ynh_exec_as $app php8.1 artisan config:cache
 popd
 
 #if ynh_version_gt "2.15.0" "${previous_version}" ; then
 #	ynh_script_progression --message="Upgrading for 2.15.0..."
 #	pushd "$install_dir"
-#		ynh_exec_warn_less ynh_exec_as $app php$phpversion artisan monica:moveavatarstophotosdirectory
+#		ynh_exec_warn_less ynh_exec_as $app php8.1 artisan monica:moveavatarstophotosdirectory
 #	popd
 #fi
 
