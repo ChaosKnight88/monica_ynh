@@ -65,7 +65,7 @@ ynh_add_nginx_config
 #=================================================
 #REMOVEME? ynh_script_progression --message="Installing composer dependencies..."
 
-ynh_exec_warn_less ynh_install_composer --phpversion="$phpversion" --workdir="$install_dir"
+ynh_exec_warn_less ynh_install_composer --phpversion="8.1" --workdir="$install_dir"
 
 chmod 750 "$install_dir"
 chmod -R o-rwx "$install_dir"
@@ -90,8 +90,8 @@ pushd "$install_dir"
 	ynh_use_nodejs
 	ynh_exec_warn_less ynh_exec_as $app $ynh_node_load_PATH yarn install
 	ynh_exec_warn_less ynh_exec_as $app $ynh_node_load_PATH yarn run production
-	ynh_exec_warn_less ynh_exec_as $app php$phpversion artisan setup:production --force --email=$email --password=$password
-	ynh_exec_warn_less ynh_exec_as $app php$phpversion artisan passport:client --password -n > key.txt
+	ynh_exec_warn_less ynh_exec_as $app php8.1 artisan setup:production --force --email=$email --password=$password
+	ynh_exec_warn_less ynh_exec_as $app php8.1 artisan passport:client --password -n > key.txt
 	mobile_id=$( cd $install_dir && tail -2 key.txt | head -1 | cut -c 12- )
 	mobile_key=$( cd $install_dir && tail -1 key.txt | cut -c 16- )
 	ynh_replace_string  --match_string="mobile_id"  --replace_string="$mobile_id"  --target_file="$install_dir/.env"
@@ -99,7 +99,7 @@ pushd "$install_dir"
 	ynh_app_setting_set --app=$app --key=mobile_id --value=$mobile_id
 	ynh_app_setting_set --app=$app --key=mobile_key --value=$mobile_key
 	ynh_secure_remove --file="$install_dir/key.txt"
-	ynh_exec_warn_less ynh_exec_as $app php$phpversion artisan config:cache
+	ynh_exec_warn_less ynh_exec_as $app php8.1 artisan config:cache
 popd
 
 # Calculate and store the config file checksum into the app settings
